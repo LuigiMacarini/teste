@@ -1,4 +1,4 @@
-📊 Processamento e Consolidação de Despesas – ANS
+# 📊 Processamento e Consolidação de Despesas – ANS
 📌 Descrição Geral
 
 Este projeto realiza a integração com a API pública de Dados Abertos da ANS, com o objetivo de identificar, processar e consolidar os dados de Despesas com Eventos/Sinistros referentes aos 3 últimos trimestres disponíveis.
@@ -6,7 +6,7 @@ Este projeto realiza a integração com a API pública de Dados Abertos da ANS, 
 A aplicação foi desenvolvida em Java, priorizando robustez, clareza de código e decisões técnicas justificadas, conforme solicitado no teste.
 
 ---
-🛠️ Tecnologias Utilizadas
+# 🛠️ Tecnologias Utilizadas
 
 Java 17+
 
@@ -21,24 +21,28 @@ ZIP (java.util.zip)
 Maven
 
 ---
-📂 Estrutura do Projeto
+## 📂 Estrutura do Projeto
+
+```text
 ├── src
 │   ├── main
 │   │   ├── java
 │   │   │   ├── model
 │   │   │   ├── service
 │   │   │   └── Main.java
-│   └── resources
+│   │   └── resources
 ├── data
 │   ├── raw        (downloads)
 │   ├── extracted  (arquivos extraídos)
 │   └── output     (CSV e ZIP final)
 └── README.md
+```
 
-⚠️ Os diretórios de dados (data/) são ignorados no versionamento via .gitignore.
+
+### ⚠️ Os diretórios de dados (data/) são ignorados no versionamento via .gitignore.
 
 ---
-🔄 Fluxo da Aplicação
+# 🔄 Fluxo da Aplicação
 
 Acessa o endpoint público da ANS
 
@@ -59,12 +63,12 @@ Gera um CSV final consolidado
 Compacta o CSV em consolidado_despesas.zip
 
 ---
-📑 Processamento e Normalização
-📌 Identificação de Arquivos Relevantes
+# 📑 Processamento e Normalização
+### 📌 Identificação de Arquivos Relevantes
 
 Somente arquivos contendo colunas associadas a despesas/sinistros são processados. Arquivos irrelevantes são ignorados.
 
-📌 Normalização de Colunas
+### 📌 Normalização de Colunas
 
 Os arquivos podem conter variações de nomes de colunas, como:
 
@@ -79,7 +83,7 @@ VALOR_PAGO
 O sistema identifica automaticamente a estrutura e extrai o valor correto, garantindo compatibilidade entre formatos distintos.
 
 ---
-⚙️ Estratégia de Processamento (Trade-off Técnico)
+# ⚙️ Estratégia de Processamento (Trade-off Técnico)
 
 Decisão: processamento incremental (linha a linha).
 
@@ -94,11 +98,11 @@ Maior escalabilidade
 Evita carregamento completo em memória
 
 ---
-📊 Consolidação dos Dados
-🔑 Chave de Consolidação
+# 📊 Consolidação dos Dados
+### 🔑 Chave de Consolidação
 (REG_ANS, Ano, Trimestre)
 
-📌 Regras Aplicadas
+### 📌 Regras Aplicadas
 
 Valores zerados ou negativos → ignorados
 
@@ -107,7 +111,7 @@ Registros duplicados → somados corretamente
 Dados inconsistentes → tratados conforme regras acima
 
 ---
-⚠️ Tratamento de Inconsistências
+# ⚠️ Tratamento de Inconsistências
 Inconsistência	Tratamento	Justificativa
 Valores ≤ 0	Ignorados	Não representam despesas reais
 Estruturas diferentes	Normalização dinâmica	Robustez contra variações
@@ -115,7 +119,7 @@ Ausência de CNPJ	REG_ANS utilizado	Fonte não fornece CNPJ
 Ausência de Razão Social	Valor padrão	Informação inexistente na origem
 
 ---
-📄 Formato do CSV Final
+# 📄 Formato do CSV Final
 
 Arquivo: consolidado_despesas.csv
 
@@ -128,7 +132,7 @@ Observação:
 Como a fonte não disponibiliza CNPJ ou Razão Social, o campo CNPJ é preenchido com o identificador REG_ANS, devidamente documentado.
 
 ---
-📦 Compactação
+# 📦 Compactação
 
 O CSV final é compactado no arquivo:
 
@@ -136,11 +140,13 @@ consolidado_despesas.zip
 
 ---
 Como Executar
+1. Clone o repositório
 
-Clone esse repositório
-E de Run na main
+2. Abra o projeto no IntelliJ
+
+3. Execute a classe Main
 
 ---
-👤 Autor
+# 👤 Autor
 
-Luigi Niespodzinski Macarini
+**Luigi Niespodzinski Macarini**
