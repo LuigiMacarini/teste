@@ -1,29 +1,33 @@
-# 📊 Processamento e Consolidação de Despesas – ANS
-📌 Descrição Geral
+## 📊 Processamento, Validação e Consolidação de Despesas – ANS
+### 📌 Visão Geral
 
-Este projeto realiza a integração com a API pública de Dados Abertos da ANS, com o objetivo de identificar, processar e consolidar os dados de Despesas com Eventos/Sinistros referentes aos 3 últimos trimestres disponíveis.
+Este projeto implementa uma solução completa para integração, processamento, validação, enriquecimento e agregação de dados financeiros da ANS, conforme especificado no documento do teste técnico.
 
-A aplicação foi desenvolvida em Java, priorizando robustez, clareza de código e decisões técnicas justificadas, conforme solicitado no teste.
+A aplicação foi desenvolvida em Java, com foco em:
 
----
-# 🛠️ Tecnologias Utilizadas
+Robustez frente a variações de estrutura
+
+Escalabilidade para grandes volumes de dados
+
+Clareza nas decisões técnicas (trade-offs)
+
+Transparência no tratamento de inconsistências
+
+## 🛠️ Tecnologias Utilizadas
 
 Java 17+
 
-java.net.http.HttpClient (API nativa)
+API nativa java.net.http.HttpClient
 
-Processamento de arquivos CSV/TXT
+Processamento manual de CSV / TXT
 
-Regex para parsing manual
+Regex e parsing dinâmico de colunas
 
 ZIP (java.util.zip)
 
 Maven
 
----
-## 📂 Estrutura do Projeto
-
-```text
+📂 Estrutura do Projeto
 ├── src
 │   ├── main
 │   │   ├── java
@@ -32,45 +36,65 @@ Maven
 │   │   │   └── Main.java
 │   │   └── resources
 ├── data
-│   ├── raw        (downloads)
-│   ├── extracted  (arquivos extraídos)
-│   └── output     (CSV e ZIP final)
+│   ├── raw        (arquivos ZIP baixados)
+│   ├── extracted  (conteúdo extraído)
+│   └── output     (CSVs e ZIPs finais)
 └── README.md
-```
 
 
-### ⚠️ Os diretórios de dados (data/) são ignorados no versionamento via .gitignore.
+## ⚠️ Os diretórios data/ são ignorados no versionamento via .gitignore.
 
----
-# 🔄 Fluxo da Aplicação
+### 1️⃣ Teste de Integração com API Pública
+1.1. Acesso à API de Dados Abertos da ANS
 
-Acessa o endpoint público da ANS
+Endpoint utilizado:
+https://dadosabertos.ans.gov.br/FTP/PDA/
 
-Identifica automaticamente os 3 últimos trimestres disponíveis
+✔ Estratégia adotada
 
-Baixa os arquivos ZIP correspondentes
+Identificação automática dos 3 últimos trimestres disponíveis
 
-Extrai os arquivos localmente
+Construção dinâmica das URLs no formato:
 
-Identifica e processa apenas arquivos relacionados a Despesas com Eventos/Sinistros
+YYYY/QQ
 
-Normaliza estruturas de colunas diferentes
 
-Consolida os dados por operadora, ano e trimestre
+Implementação resiliente a:
 
-Gera um CSV final consolidado
+Variações de diretório
 
-Compacta o CSV em consolidado_despesas.zip
+Múltiplos arquivos por trimestre
 
----
-# 📑 Processamento e Normalização
-### 📌 Identificação de Arquivos Relevantes
+Reexecuções (download não duplicado)
 
-Somente arquivos contendo colunas associadas a despesas/sinistros são processados. Arquivos irrelevantes são ignorados.
+1.2. Processamento de Arquivos
+✔ Download e Extração
 
-### 📌 Normalização de Colunas
+Todos os arquivos ZIP dos trimestres identificados são:
 
-Os arquivos podem conter variações de nomes de colunas, como:
+Baixados automaticamente
+
+Extraídos localmente
+
+✔ Identificação de Arquivos Relevantes
+
+Somente arquivos que contêm dados de Despesas com Eventos/Sinistros são processados.
+
+A identificação ocorre por:
+
+Análise do header
+
+Presença de colunas associadas a despesas
+
+✔ Normalização de Estruturas
+
+Os arquivos podem apresentar variações como:
+
+CSV ou TXT
+
+Separadores diferentes
+
+Nomes de colunas distintos, por exemplo:
 
 VL_SINISTRO
 
@@ -80,73 +104,153 @@ VL_DESPESA
 
 VALOR_PAGO
 
-O sistema identifica automaticamente a estrutura e extrai o valor correto, garantindo compatibilidade entre formatos distintos.
+## 🔧 Solução adotada:
+Mapeamento dinâmico de colunas por nome, permitindo leitura independente da ordem ou nomenclatura exata.
 
----
-# ⚙️ Estratégia de Processamento (Trade-off Técnico)
+## ⚙️ Trade-off Técnico – Estratégia de Processamento
 
-Decisão: processamento incremental (linha a linha).
+Decisão: processamento incremental (linha a linha)
 
 Justificativa:
 
-Arquivos grandes (centenas de milhares de registros)
+Arquivos com centenas de milhares de registros
 
-Redução do consumo de memória
+Menor consumo de memória
 
 Maior escalabilidade
 
 Evita carregamento completo em memória
 
----
-# 📊 Consolidação dos Dados
-### 🔑 Chave de Consolidação
-(REG_ANS, Ano, Trimestre)
+1.3. Consolidação e Análise de Inconsistências
+✔ Consolidação
 
-### 📌 Regras Aplicadas
+Os dados dos 3 trimestres são consolidados em um único arquivo:
 
-Valores zerados ou negativos → ignorados
+consolidado_despesas.csv
 
-Registros duplicados → somados corretamente
-
-Dados inconsistentes → tratados conforme regras acima
-
----
-# ⚠️ Tratamento de Inconsistências
-Inconsistência	Tratamento	Justificativa
-Valores ≤ 0	Ignorados	Não representam despesas reais
-Estruturas diferentes	Normalização dinâmica	Robustez contra variações
-Ausência de CNPJ	REG_ANS utilizado	Fonte não fornece CNPJ
-Ausência de Razão Social	Valor padrão	Informação inexistente na origem
-
----
-# 📄 Formato do CSV Final
-
-Arquivo: consolidado_despesas.csv
-
-Colunas:
-
+## 📄 Estrutura do CSV Consolidado
 CNPJ;RazaoSocial;Trimestre;Ano;ValorDespesas
 
 
-Observação:
-Como a fonte não disponibiliza CNPJ ou Razão Social, o campo CNPJ é preenchido com o identificador REG_ANS, devidamente documentado.
+## ⚠️ Observação importante:
+A fonte da ANS não disponibiliza CNPJ nem Razão Social diretamente nos arquivos financeiros.
+Por isso:
 
----
-# 📦 Compactação
+O campo CNPJ é preenchido com o identificador REG_ANS
 
-O CSV final é compactado no arquivo:
+A Razão Social recebe valor padrão quando ausente
+
+## ⚠️ Tratamento de Inconsistências
+Inconsistência	Tratamento	Justificativa
+Valores ≤ 0	Ignorados	Não representam despesas reais
+CNPJs duplicados	Somados na consolidação	Evita duplicidade financeira
+Razões sociais divergentes	Primeira ocorrência mantida	Fonte não confiável
+Datas inconsistentes	Normalização por trimestre	Padronização
+📦 Compactação
+
+O CSV final é compactado automaticamente em:
 
 consolidado_despesas.zip
 
----
-Como Executar
-1. Clone o repositório
+2️⃣ Teste de Transformação e Validação de Dados
+2.1. Validação de Dados
 
-2. Abra o projeto no IntelliJ
+A partir do CSV consolidado, foi gerado:
 
-3. Execute a classe Main
+despesas_validadas.csv
 
----
-# 👤 Autor
+✔ Validações Implementadas
 
-**Luigi Niespodzinski Macarini**
+CNPJ válido
+
+Formato e dígitos verificadores
+
+ValorDespesas positivo
+
+Razão Social não vazia
+
+Campos adicionais gerados:
+
+CnpjValido;ValorValido;RazaoSocialValida
+
+## ⚙️ Trade-off Técnico – CNPJs inválidos
+
+Decisão:
+CNPJs inválidos não são descartados, apenas marcados como inválidos.
+
+Prós:
+
+Preserva dados financeiros relevantes
+
+Permite auditoria posterior
+
+Contras:
+
+Exige validação adicional em análises futuras
+
+2.2. Enriquecimento de Dados
+✔ Fonte Utilizada
+
+Cadastro de operadoras ativas da ANS:
+
+https://dadosabertos.ans.gov.br/FTP/PDA/operadoras_de_plano_de_saude_ativas/
+
+✔ Join realizado por:
+
+CNPJ (ou REG_ANS quando necessário)
+
+✔ Colunas adicionadas:
+
+RegistroANS
+
+Modalidade
+
+UF
+
+## ⚠️ Tratamento de Falhas no Join
+Situação	Tratamento	Justificativa
+Registro sem match	Mantido com campos vazios	Evita perda de dados
+CNPJ duplicado no cadastro	Primeira ocorrência	Simplicidade e previsibilidade
+UF ausente	Campo vazio	Dado indisponível
+📈 Agregação com Múltiplas Estratégias
+
+Os dados enriquecidos foram agregados por:
+
+RazaoSocial + UF
+
+✔ Métricas calculadas:
+
+TotalDespesas
+
+Média Trimestral
+
+Desvio Padrão
+
+Arquivo gerado:
+
+despesas_agregadas.csv
+
+
+Formato:
+
+RazaoSocial;UF;TotalDespesas;MediaTrimestral;DesvioPadrao
+
+## ⚙️ Trade-off Técnico – Agregação e Ordenação
+
+Uso de acumuladores estatísticos
+
+Ordenação por TotalDespesas (decrescente)
+
+Estratégia adequada para grandes volumes sem custo excessivo de memória
+
+## ▶️ Como Executar
+
+Clone o repositório
+
+Abra no IntelliJ IDEA
+
+Execute a classe Main
+
+👤 Autor
+
+Luigi Niespodzinski Macarini
