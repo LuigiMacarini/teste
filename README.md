@@ -27,7 +27,9 @@ ZIP (java.util.zip)
 
 Maven
 
-📂 Estrutura do Projeto
+## 📂 Estrutura do Projeto
+
+```text
 ├── src
 │   ├── main
 │   │   ├── java
@@ -36,10 +38,11 @@ Maven
 │   │   │   └── Main.java
 │   │   └── resources
 ├── data
-│   ├── raw        (arquivos ZIP baixados)
-│   ├── extracted  (conteúdo extraído)
-│   └── output     (CSVs e ZIPs finais)
+│   ├── raw        (downloads)
+│   ├── extracted  (arquivos extraídos)
+│   └── output     (CSV e ZIP final)
 └── README.md
+```
 
 
 ## ⚠️ Os diretórios data/ são ignorados no versionamento via .gitignore.
