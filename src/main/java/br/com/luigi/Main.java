@@ -1,15 +1,14 @@
 package br.com.luigi;
 
-import br.com.luigi.model.Data;
-import br.com.luigi.model.ExpenseRecord;
+import br.com.luigi.model.*;
 import br.com.luigi.service.*;
-import br.com.luigi.model.ExpenseFileDetector;
 
 import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -85,6 +84,30 @@ public class Main {
                 csvPath,
                 Path.of("data/output/consolidado_despesas.zip")
         );
+        ExpenseValidationService validationService = new ExpenseValidationService();
+        validationService.generateValidatedCsv(
+                Path.of("data/output/consolidado_despesas.csv"),
+                Path.of("data/output/despesas_validadas.csv")
+        );
+
+        ValidatedExpenseCsvReader reader = new ValidatedExpenseCsvReader();
+
+        List<ValidatedExpenseRecord> validatedRecords =
+                reader.read(Path.of("data/output/despesas_validadas.csv"));
+
+        ExpenseAggregator aggregator = new ExpenseAggregator();
+
+        Map<AggregationKey, AggregationAccumulator> aggregated =
+                aggregator.aggregate(validatedRecords);
+
+        AggregatedCsvWriter writer = new AggregatedCsvWriter();
+
+        writer.write(
+                aggregated,
+                Path.of("data/output/despesas_agregadas.csv")
+        );
+
+        System.out.println("CSV agregado gerado com sucesso!");
 
 
 
